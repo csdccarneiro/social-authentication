@@ -9,7 +9,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
 
-  async function requestAuth (platform: 'github') {
+  async function requestAuth (platform: 'github' | 'twitter') {
 
     const authPlatform = ConfigAuth[platform]
 
@@ -17,10 +17,7 @@ export default function Login() {
 
     const response = await request.promptAsync(authPlatform.discovery);
 
-    //@ts-ignore
-    const { code } = response.params
-
-    const user = await authPlatform.getUser(code)
+    const user = await authPlatform.getUser(request, response)
 
   }
 
@@ -28,6 +25,7 @@ export default function Login() {
     <View style={styles.container}>
       <Text>Olá sou uma tela de login</Text>
       <Button title="Login GitHub" color={'black'} onPress={() => requestAuth('github')} />
+      <Button title="Login Twitter" color={'blue'} onPress={() => requestAuth('twitter')} />
       <StatusBar style="auto" />
     </View>
   );
