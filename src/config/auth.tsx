@@ -2,12 +2,16 @@ import { makeRedirectUri, AuthRequest, AuthSessionResult } from 'expo-auth-sessi
 import { Buffer } from "buffer";
 import { GITHUB_BASE_URL, GITHUB_API_BASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@env"
 import { TWITTER_BASE_URL, TWITTER_API_BASE_URL, TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } from "@env"
+import { SPOTIFY_BASE_URL, SPOTIFY_API_BASE_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "@env"
+
 
 export default {
     github: {
         config: {
             clientId: GITHUB_CLIENT_ID,
-            scopes: ['identity'],
+            scopes: [
+                'identity'
+            ],
             redirectUri: makeRedirectUri({ scheme: 'socialauthentication' })
         },
         discovery: {
@@ -39,7 +43,10 @@ export default {
     twitter: {
         config: {
             clientId: TWITTER_CLIENT_ID,
-            scopes: ['tweet.read', 'users.read'],
+            scopes: [
+                'tweet.read', 
+                'users.read'
+            ],
             usePKCE: true,
             redirectUri: makeRedirectUri({ scheme: 'socialauthentication' })
         },
@@ -77,6 +84,56 @@ export default {
             const configToken = await responseTokenGenerate.json()
 
             const apiUrl = `${TWITTER_API_BASE_URL}/2/users/me`
+
+            const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
+
+            const user = await responseUser.json()
+
+            return user
+
+        }
+    },
+    spotify: {
+        config: {
+            clientId: SPOTIFY_CLIENT_ID,
+            scopes: [
+                'user-read-email', 
+                'playlist-modify-public'
+            ],
+            usePKCE: false,
+            redirectUri: makeRedirectUri({ scheme: 'socialauthentication' })
+        },
+        discovery: {
+            authorizationEndpoint: `${SPOTIFY_BASE_URL}/authorize`,
+            tokenEndpoint: `${SPOTIFY_BASE_URL}/api/token`
+        },
+        getUser: async function (request: AuthRequest, response: AuthSessionResult) {
+
+            //@ts-ignore
+            const { code } = response.params
+
+            const generateTokenUrl = `${SPOTIFY_BASE_URL}/api/token`
+
+            const authBase64 = Buffer.from(`${request.clientId}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')
+
+            const formData = new URLSearchParams();
+            //@ts-ignore
+            formData.append('code', code);
+            formData.append('grant_type', 'authorization_code');
+            formData.append('redirect_uri', request.redirectUri);
+
+            const responseTokenGenerate = await fetch(generateTokenUrl, { 
+                method: 'POST', 
+                body: formData.toString(),
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Authorization: `Basic ${authBase64}`
+                } 
+            })
+            
+            const configToken = await responseTokenGenerate.json()
+
+            const apiUrl = `${SPOTIFY_API_BASE_URL}/v1/me`
 
             const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
 

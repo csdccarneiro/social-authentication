@@ -9,7 +9,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
 
-  async function requestAuth (platform: 'github' | 'twitter') {
+  async function requestAuth (platform: 'github' | 'twitter' | 'spotify') {
 
     const authPlatform = ConfigAuth[platform]
 
@@ -26,6 +26,7 @@ export default function Login() {
       <Text>Olá sou uma tela de login</Text>
       <Button title="Login GitHub" color={'black'} onPress={() => requestAuth('github')} />
       <Button title="Login Twitter" color={'blue'} onPress={() => requestAuth('twitter')} />
+      <Button title="Login Spotify" color={'green'} onPress={() => requestAuth('spotify')} />
       <StatusBar style="auto" />
     </View>
   );
