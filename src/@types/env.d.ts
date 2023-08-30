@@ -15,4 +15,8 @@ declare module '@env' {
     export const SPOTIFY_API_BASE_URL: string;
     export const SPOTIFY_CLIENT_ID: string;
     export const SPOTIFY_CLIENT_SECRET: string;
+
+    export const REDDIT_BASE_URL: string;
+    export const REDDIT_API_BASE_URL: string;
+    export const REDDIT_CLIENT_ID: string;
 }
