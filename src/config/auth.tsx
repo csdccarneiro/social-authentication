@@ -3,6 +3,7 @@ import { Buffer } from "buffer";
 import { GITHUB_BASE_URL, GITHUB_API_BASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@env"
 import { TWITTER_BASE_URL, TWITTER_API_BASE_URL, TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } from "@env"
 import { SPOTIFY_BASE_URL, SPOTIFY_API_BASE_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "@env"
+import { REDDIT_BASE_URL, REDDIT_API_BASE_URL, REDDIT_CLIENT_ID } from "@env"
 
 
 export default {
@@ -134,6 +135,55 @@ export default {
             const configToken = await responseTokenGenerate.json()
 
             const apiUrl = `${SPOTIFY_API_BASE_URL}/v1/me`
+
+            const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
+
+            const user = await responseUser.json()
+
+            return user
+
+        }
+    },
+    reddit: {
+        config: {
+            clientId: REDDIT_CLIENT_ID,
+            scopes: [
+                'identity'
+            ],
+            usePKCE: false,
+            redirectUri: makeRedirectUri({ scheme: 'socialauthentication', path: 'redirect' })
+        },
+        discovery: {
+            authorizationEndpoint: `${REDDIT_BASE_URL}/api/v1/authorize.compact`,
+            tokenEndpoint: `${REDDIT_BASE_URL}/api/v1/access_token`
+        },
+        getUser: async function (request: AuthRequest, response: AuthSessionResult) {
+
+            //@ts-ignore
+            const { code } = response.params
+
+            const generateTokenUrl = `${REDDIT_BASE_URL}/api/v1/access_token`
+
+            const authBase64 = Buffer.from(`${request.clientId}:`).toString('base64')
+
+            const formData = new URLSearchParams();
+            //@ts-ignore
+            formData.append('code', code);
+            formData.append('grant_type', 'authorization_code');
+            formData.append('redirect_uri', request.redirectUri);
+
+            const responseTokenGenerate = await fetch(generateTokenUrl, { 
+                method: 'POST', 
+                body: formData.toString(),
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Authorization: `Basic ${authBase64}`
+                } 
+            })
+            
+            const configToken = await responseTokenGenerate.json()
+
+            const apiUrl = `${REDDIT_API_BASE_URL}/api/v1/me`
 
             const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
 

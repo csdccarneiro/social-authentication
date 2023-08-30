@@ -9,7 +9,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
 
-  async function requestAuth (platform: 'github' | 'twitter' | 'spotify') {
+  async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit') {
 
     const authPlatform = ConfigAuth[platform]
 
@@ -27,6 +27,7 @@ export default function Login() {
       <Button title="Login GitHub" color={'black'} onPress={() => requestAuth('github')} />
       <Button title="Login Twitter" color={'blue'} onPress={() => requestAuth('twitter')} />
       <Button title="Login Spotify" color={'green'} onPress={() => requestAuth('spotify')} />
+      <Button title="Login Reddit" color={'orange'} onPress={() => requestAuth('reddit')} />
       <StatusBar style="auto" />
     </View>
   );
