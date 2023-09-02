@@ -18,7 +18,12 @@ export default function Login() {
 
     const response = await request.promptAsync(authPlatform.discovery);
 
-    const user = await authPlatform.getUser(request, response)
+    const configToken = await authPlatform.getAccessToken(request, response)
+
+    //@ts-ignore
+    const user = await authPlatform.getUser(configToken.access_token)
+
+    console.log(user)
 
   }
 

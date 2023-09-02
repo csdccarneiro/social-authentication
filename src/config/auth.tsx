@@ -1,5 +1,6 @@
 import { makeRedirectUri, AuthRequest, AuthSessionResult } from 'expo-auth-session';
 import { Buffer } from "buffer";
+import axios from "axios";
 import { GITHUB_BASE_URL, GITHUB_API_BASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@env"
 import { TWITTER_BASE_URL, TWITTER_API_BASE_URL, TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } from "@env"
 import { SPOTIFY_BASE_URL, SPOTIFY_API_BASE_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "@env"
@@ -20,24 +21,34 @@ export default {
             tokenEndpoint: `${GITHUB_BASE_URL}/login/oauth/access_token`,
             revocationEndpoint: `${GITHUB_BASE_URL}/settings/connections/applications/${GITHUB_CLIENT_ID}`,
         },
-        getUser: async function (request: AuthRequest, response: AuthSessionResult) {
-            
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
+
             //@ts-ignore
             const { code } = response.params
 
-            const generateTokenUrl = `${GITHUB_BASE_URL}/login/oauth/access_token?client_id=${request.clientId}&client_secret=${GITHUB_CLIENT_SECRET}&code=${code}`
+            const responseTokenGenerate = await axios.post(`${GITHUB_BASE_URL}/login/oauth/access_token`, {}, {
+                params: {
+                    client_id: request.clientId,
+                    client_secret: GITHUB_CLIENT_SECRET, 
+                    code: code
+                },
+                headers: { 
+                    Accept: 'application/json' 
+                }
+            })
 
-            const responseTokenGenerate = await fetch(generateTokenUrl, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' } })
+            return responseTokenGenerate.data
+
+        },  
+        getUser: async function (access_token: string) {
             
-            const configToken = await responseTokenGenerate.json()
+            const responseUser = await axios.get(`${GITHUB_API_BASE_URL}/user`, {
+                headers: { 
+                    Authorization: `Bearer ${access_token}` 
+                }
+            })
 
-            const apiUrl = `${GITHUB_API_BASE_URL}/user`
-
-            const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
-
-            const user = await responseUser.json()
-
-            return user
+            return responseUser.data
 
         }
     },
@@ -56,14 +67,10 @@ export default {
             tokenEndpoint: `${TWITTER_BASE_URL}/i/oauth2/token`,
             revocationEndpoint: `${TWITTER_BASE_URL}/i/oauth2/revoke`
         },
-        getUser: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
 
             //@ts-ignore
             const { code } = response.params
-
-            const generateTokenUrl = `${TWITTER_API_BASE_URL}/2/oauth2/token`
-
-            const authBase64 = Buffer.from(`${request.clientId}:${TWITTER_CLIENT_SECRET}`).toString('base64')
 
             const formData = new URLSearchParams();
             //@ts-ignore
@@ -73,24 +80,27 @@ export default {
             formData.append('code_verifier', (request.codeVerifier || ''));
             formData.append('redirect_uri', request.redirectUri);
 
-            const responseTokenGenerate = await fetch(generateTokenUrl, { 
-                method: 'POST', 
-                body: formData.toString(), 
+            const authBase64 = Buffer.from(`${request.clientId}:${TWITTER_CLIENT_SECRET}`).toString('base64')
+
+            const responseTokenGenerate = await axios.post(`${TWITTER_API_BASE_URL}/2/oauth2/token`, formData.toString(), {
                 headers: { 
                     'Content-Type': 'application/x-www-form-urlencoded',
                     Authorization: `Basic ${authBase64}`
-                } 
+                }
             })
-            
-            const configToken = await responseTokenGenerate.json()
 
-            const apiUrl = `${TWITTER_API_BASE_URL}/2/users/me`
+            return responseTokenGenerate.data
 
-            const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
+        },
+        getUser: async function (access_token: string) {
 
-            const user = await responseUser.json()
+            const responseUser = await axios.get(`${TWITTER_API_BASE_URL}/2/users/me`, {
+                headers: { 
+                    Authorization: `Bearer ${access_token}` 
+                }
+            })
 
-            return user
+            return responseUser.data.data
 
         }
     },
@@ -108,14 +118,10 @@ export default {
             authorizationEndpoint: `${SPOTIFY_BASE_URL}/authorize`,
             tokenEndpoint: `${SPOTIFY_BASE_URL}/api/token`
         },
-        getUser: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
 
             //@ts-ignore
             const { code } = response.params
-
-            const generateTokenUrl = `${SPOTIFY_BASE_URL}/api/token`
-
-            const authBase64 = Buffer.from(`${request.clientId}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')
 
             const formData = new URLSearchParams();
             //@ts-ignore
@@ -123,24 +129,27 @@ export default {
             formData.append('grant_type', 'authorization_code');
             formData.append('redirect_uri', request.redirectUri);
 
-            const responseTokenGenerate = await fetch(generateTokenUrl, { 
-                method: 'POST', 
-                body: formData.toString(),
+            const authBase64 = Buffer.from(`${request.clientId}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')
+
+            const responseTokenGenerate = await axios.post(`${SPOTIFY_BASE_URL}/api/token`, formData.toString(), {
                 headers: { 
                     'Content-Type': 'application/x-www-form-urlencoded',
                     Authorization: `Basic ${authBase64}`
-                } 
+                }
             })
+
+            return responseTokenGenerate.data
+
+        },
+        getUser: async function (access_token: string) {
             
-            const configToken = await responseTokenGenerate.json()
+            const responseUser = await axios.get(`${SPOTIFY_API_BASE_URL}/v1/me`, {
+                headers: { 
+                    Authorization: `Bearer ${access_token}` 
+                }
+            })
 
-            const apiUrl = `${SPOTIFY_API_BASE_URL}/v1/me`
-
-            const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
-
-            const user = await responseUser.json()
-
-            return user
+            return responseUser.data
 
         }
     },
@@ -157,14 +166,10 @@ export default {
             authorizationEndpoint: `${REDDIT_BASE_URL}/api/v1/authorize.compact`,
             tokenEndpoint: `${REDDIT_BASE_URL}/api/v1/access_token`
         },
-        getUser: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
 
             //@ts-ignore
             const { code } = response.params
-
-            const generateTokenUrl = `${REDDIT_BASE_URL}/api/v1/access_token`
-
-            const authBase64 = Buffer.from(`${request.clientId}:`).toString('base64')
 
             const formData = new URLSearchParams();
             //@ts-ignore
@@ -172,24 +177,27 @@ export default {
             formData.append('grant_type', 'authorization_code');
             formData.append('redirect_uri', request.redirectUri);
 
-            const responseTokenGenerate = await fetch(generateTokenUrl, { 
-                method: 'POST', 
-                body: formData.toString(),
+            const authBase64 = Buffer.from(`${request.clientId}:`).toString('base64')
+
+            const responseTokenGenerate = await axios.post(`${REDDIT_BASE_URL}/api/v1/access_token`, formData.toString(), {
                 headers: { 
                     'Content-Type': 'application/x-www-form-urlencoded',
                     Authorization: `Basic ${authBase64}`
-                } 
+                }
             })
-            
-            const configToken = await responseTokenGenerate.json()
 
-            const apiUrl = `${REDDIT_API_BASE_URL}/api/v1/me`
+            return responseTokenGenerate.data
 
-            const responseUser = await fetch(apiUrl, { method: 'GET', headers: { Authorization: `Bearer ${configToken.access_token}` } })
+        },
+        getUser: async function (access_token: string) {
 
-            const user = await responseUser.json()
+            const responseUser = await axios.get(`${REDDIT_API_BASE_URL}/api/v1/me`, {
+                headers: { 
+                    Authorization: `Bearer ${access_token}` 
+                }
+            })
 
-            return user
+            return responseUser.data
 
         }
     }
