@@ -21,7 +21,7 @@ export default {
             tokenEndpoint: `${GITHUB_BASE_URL}/login/oauth/access_token`,
             revocationEndpoint: `${GITHUB_BASE_URL}/settings/connections/applications/${GITHUB_CLIENT_ID}`,
         },
-        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult): Promise<Global.TokenProps> {
 
             //@ts-ignore
             const { code } = response.params
@@ -67,7 +67,7 @@ export default {
             tokenEndpoint: `${TWITTER_BASE_URL}/i/oauth2/token`,
             revocationEndpoint: `${TWITTER_BASE_URL}/i/oauth2/revoke`
         },
-        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult): Promise<Global.TokenProps> {
 
             //@ts-ignore
             const { code } = response.params
@@ -118,7 +118,7 @@ export default {
             authorizationEndpoint: `${SPOTIFY_BASE_URL}/authorize`,
             tokenEndpoint: `${SPOTIFY_BASE_URL}/api/token`
         },
-        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult): Promise<Global.TokenProps> {
 
             //@ts-ignore
             const { code } = response.params
@@ -166,7 +166,7 @@ export default {
             authorizationEndpoint: `${REDDIT_BASE_URL}/api/v1/authorize.compact`,
             tokenEndpoint: `${REDDIT_BASE_URL}/api/v1/access_token`
         },
-        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult) {
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult): Promise<Global.TokenProps> {
 
             //@ts-ignore
             const { code } = response.params

@@ -20,7 +20,6 @@ export default function Login() {
 
     const configToken = await authPlatform.getAccessToken(request, response)
 
-    //@ts-ignore
     const user = await authPlatform.getUser(configToken.access_token)
 
     console.log(user)
