@@ -1,6 +1,7 @@
 import { makeRedirectUri, AuthRequest, AuthSessionResult } from 'expo-auth-session';
 import { Buffer } from "buffer";
 import axios from "axios";
+import { GOOGLE_BASE_URL, GOOGLE_OAUTH_BASE_URL, GOOGLE_API_BASE_URL, GOOGLE_CLIENT_ID } from "@env"
 import { GITHUB_BASE_URL, GITHUB_API_BASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@env"
 import { TWITTER_BASE_URL, TWITTER_API_BASE_URL, TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } from "@env"
 import { SPOTIFY_BASE_URL, SPOTIFY_API_BASE_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "@env"
@@ -192,6 +193,52 @@ export default {
         getUser: async function (access_token: string) {
 
             const responseUser = await axios.get(`${REDDIT_API_BASE_URL}/api/v1/me`, {
+                headers: { 
+                    Authorization: `Bearer ${access_token}` 
+                }
+            })
+
+            return responseUser.data
+
+        }
+    },
+    google: {
+        config: {
+            clientId: GOOGLE_CLIENT_ID,
+            scopes: [
+                'email',
+                'profile'
+            ],
+            usePKCE: false,
+            redirectUri:  makeRedirectUri({ native: 'com.csdccarneiro.socialauthentication:/oauthredirect' })
+        },
+        discovery: {
+            authorizationEndpoint: `${GOOGLE_BASE_URL}/o/oauth2/v2/auth`
+        },
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult): Promise<Global.TokenProps> {
+
+            //@ts-ignore
+            const { code } = response.params
+
+            const formData = new URLSearchParams();
+            //@ts-ignore
+            formData.append('code', code);
+            formData.append('grant_type', 'authorization_code');
+            formData.append('redirect_uri', request.redirectUri);
+            formData.append('client_id', request.clientId);
+
+            const responseTokenGenerate = await axios.post(`${GOOGLE_OAUTH_BASE_URL}/token`, formData.toString(), {
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+
+            return responseTokenGenerate.data
+
+        },
+        getUser: async function (access_token: string) {
+
+            const responseUser = await axios.get(`${GOOGLE_API_BASE_URL}/userinfo/v2/me`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
                 }

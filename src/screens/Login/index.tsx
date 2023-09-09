@@ -10,7 +10,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
 
-  async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit') {
+  async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google') {
 
     const authPlatform = ConfigAuth[platform]
 
@@ -38,6 +38,10 @@ export default function Login() {
         </Text>
       </View>
       <View style={styles.containerButton}>
+        <FontAwesome.Button name="google" style={styles.button} backgroundColor="#d62d20" 
+          size={30} onPress={() => requestAuth('google')}>
+          Login com Google
+        </FontAwesome.Button>
         <FontAwesome.Button name="github" style={styles.button} backgroundColor="#000000" 
           size={30} onPress={() => requestAuth('github')}>
           Login com Github
@@ -72,7 +76,7 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   containerButton: {
-    height: '35%', 
+    height: '50%', 
     justifyContent: 'space-evenly'
   },
   title: {    
@@ -87,6 +91,6 @@ const styles = StyleSheet.create({
   },
   button: {    
     justifyContent: 'center',
-    padding: 10
+    padding: 13
   }
 });
