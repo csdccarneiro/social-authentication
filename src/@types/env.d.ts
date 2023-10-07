@@ -24,4 +24,9 @@ declare module '@env' {
     export const REDDIT_BASE_URL: string;
     export const REDDIT_API_BASE_URL: string;
     export const REDDIT_CLIENT_ID: string;
+
+    export const FACEBOOK_BASE_URL: string;
+    export const FACEBOOK_API_BASE_URL: string;
+    export const FACEBOOK_CLIENT_ID: string;
+    export const FACEBOOK_CLIENT_SECRET: string;
 }

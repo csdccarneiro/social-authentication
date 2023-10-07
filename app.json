@@ -2,7 +2,6 @@
   "expo": {
     "name": "socialauthentication",
     "slug": "socialauthentication",
-    "scheme": "socialauthentication",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,6 +27,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme": ["socialauthentication", "fb641751184611540"]
   }
 }
