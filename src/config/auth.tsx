@@ -6,6 +6,7 @@ import { GITHUB_BASE_URL, GITHUB_API_BASE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_S
 import { TWITTER_BASE_URL, TWITTER_API_BASE_URL, TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET } from "@env"
 import { SPOTIFY_BASE_URL, SPOTIFY_API_BASE_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "@env"
 import { REDDIT_BASE_URL, REDDIT_API_BASE_URL, REDDIT_CLIENT_ID } from "@env"
+import { FACEBOOK_BASE_URL, FACEBOOK_API_BASE_URL, FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET } from "@env"
 
 
 export default {
@@ -246,6 +247,45 @@ export default {
 
             return responseUser.data
 
+        }
+    },
+    facebook: {
+        config: {
+            clientId: FACEBOOK_CLIENT_ID,
+            usePKCE: false,
+            redirectUri: `fb${FACEBOOK_CLIENT_ID}://authorize/`
+        },
+        discovery: {
+            authorizationEndpoint: `${FACEBOOK_BASE_URL}/v18.0/dialog/oauth`
+        },
+        getAccessToken: async function (request: AuthRequest, response: AuthSessionResult): Promise<Global.TokenProps> {
+            
+            //@ts-ignore
+            const { code } = response.params
+    
+            const responseTokenGenerate = await axios.get(`${FACEBOOK_API_BASE_URL}/v18.0/oauth/access_token`, {
+                params: {
+                    client_id: FACEBOOK_CLIENT_ID,
+                    redirect_uri: request.redirectUri,
+                    client_secret: FACEBOOK_CLIENT_SECRET,
+                    code: code
+                }
+            })
+    
+            return responseTokenGenerate.data
+    
+        },
+        getUser: async function (access_token: string) {
+    
+            const responseUser = await axios.get(`${FACEBOOK_API_BASE_URL}/me`, {
+                params: {
+                    access_token,
+                    fields: 'id,name,picture.type(large)'
+                }
+            })
+    
+            return responseUser.data
+    
         }
     }
 }

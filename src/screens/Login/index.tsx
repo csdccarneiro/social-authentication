@@ -10,7 +10,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
 
-  async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google') {
+  async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google' | 'facebook') {
 
     const authPlatform = ConfigAuth[platform]
 
@@ -56,6 +56,10 @@ export default function Login() {
         </FontAwesome.Button>
         <FontAwesome.Button name="reddit" style={styles.button} backgroundColor="#ff6314" 
           size={30} onPress={() => requestAuth('reddit')}>
+          Login com Reddit
+        </FontAwesome.Button>
+        <FontAwesome.Button name="facebook" style={styles.button} backgroundColor="#3b5998" 
+          size={30} onPress={() => requestAuth('facebook')}>
           Login com Reddit
         </FontAwesome.Button>
         <StatusBar style="auto" />
