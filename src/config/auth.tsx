@@ -44,13 +44,20 @@ export default {
         },  
         getUser: async function (access_token: string) {
             
-            const responseUser = await axios.get(`${GITHUB_API_BASE_URL}/user`, {
+            const response = await axios.get(`${GITHUB_API_BASE_URL}/user`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
                 }
             })
 
-            return responseUser.data
+            const user = response.data
+
+            return {
+                id: String(user.id),
+                name: user.name || user.login,
+                email: user.email,
+                picture: user.avatar_url
+            }
 
         }
     },
@@ -96,13 +103,20 @@ export default {
         },
         getUser: async function (access_token: string) {
 
-            const responseUser = await axios.get(`${TWITTER_API_BASE_URL}/2/users/me`, {
+            const response = await axios.get(`${TWITTER_API_BASE_URL}/2/users/me`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
                 }
             })
 
-            return responseUser.data.data
+            const user = response.data.data
+
+            return {
+                id: String(user.id),
+                name: user.name, 
+                email: user.username,
+                picture: ""
+            }
 
         }
     },
@@ -145,13 +159,20 @@ export default {
         },
         getUser: async function (access_token: string) {
             
-            const responseUser = await axios.get(`${SPOTIFY_API_BASE_URL}/v1/me`, {
+            const response = await axios.get(`${SPOTIFY_API_BASE_URL}/v1/me`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
                 }
             })
 
-            return responseUser.data
+            const user = response.data
+
+            return {
+                id: String(user.id),
+                name: user.display_name,
+                email: user.email,
+                picture: ''
+            }
 
         }
     },
@@ -193,13 +214,20 @@ export default {
         },
         getUser: async function (access_token: string) {
 
-            const responseUser = await axios.get(`${REDDIT_API_BASE_URL}/api/v1/me`, {
+            const response = await axios.get(`${REDDIT_API_BASE_URL}/api/v1/me`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
                 }
             })
 
-            return responseUser.data
+            const user = response.data
+
+            return {
+                id: String(user.id),
+                name: user.name,
+                email: "",
+                picture: user.icon_img
+            }
 
         }
     },
@@ -211,7 +239,7 @@ export default {
                 'profile'
             ],
             usePKCE: false,
-            redirectUri:  makeRedirectUri({ native: 'com.csdccarneiro.socialauthentication:/oauthredirect' })
+            redirectUri:  makeRedirectUri({ native: 'com.csdccarneiro.socialauthentication:/oauth2redirect' })
         },
         discovery: {
             authorizationEndpoint: `${GOOGLE_BASE_URL}/o/oauth2/v2/auth`
@@ -239,13 +267,20 @@ export default {
         },
         getUser: async function (access_token: string) {
 
-            const responseUser = await axios.get(`${GOOGLE_API_BASE_URL}/userinfo/v2/me`, {
+            const response = await axios.get(`${GOOGLE_API_BASE_URL}/userinfo/v2/me`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
                 }
             })
 
-            return responseUser.data
+            const user = response.data
+
+            return {
+                id: String(user.id),
+                name: user.name,
+                email: user.email,
+                picture: user.picture
+            }
 
         }
     },
@@ -277,14 +312,21 @@ export default {
         },
         getUser: async function (access_token: string) {
     
-            const responseUser = await axios.get(`${FACEBOOK_API_BASE_URL}/me`, {
+            const response = await axios.get(`${FACEBOOK_API_BASE_URL}/me`, {
                 params: {
                     access_token,
                     fields: 'id,name,picture.type(large)'
                 }
             })
+
+            const user = response.data
     
-            return responseUser.data
+            return {
+                id: String(user.id),
+                name: user.name,
+                email: "",
+                picture: user.picture.data.url
+            }
     
         }
     }
