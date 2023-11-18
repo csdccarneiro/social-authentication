@@ -10,4 +10,11 @@ declare namespace Global {
         refresh_token?: string
     }
 
+    interface UserProps {
+        id?: number,
+        name?: string,
+        email?: string,
+        avatarUrl?: string
+    }
+
 }

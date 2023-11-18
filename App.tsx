@@ -11,6 +11,8 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
 
+  const [user, setUser] = React.useState<Global.UserProps>({})
+
   async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google' | 'facebook') {
 
     const authPlatform = ConfigAuth[platform]
@@ -21,51 +23,58 @@ export default function App() {
 
     const configToken = await authPlatform.getAccessToken(request, response)
 
-    const user = await authPlatform.getUser(configToken.access_token)
+    const currentUser = await authPlatform.getUser(configToken.access_token)
 
-    console.log(user)
+    setUser(currentUser)
 
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.containerText}>  
-        <Text style={styles.title}>
-          Bem-vindo ao Autenticador social
-        </Text>
-        <Text style={styles.description}>
-          Este app utiliza a autenticação do tipo OAuth e atualmente a mesma 
-          funciona com as plataformas abaixo:
-        </Text>
-      </View>
-      <View style={styles.containerButton}>
-        <FontAwesome.Button name="google" style={styles.button} backgroundColor="#d62d20" 
-          size={30} onPress={() => requestAuth('google')}>
-          Login com Google
-        </FontAwesome.Button>
-        <FontAwesome.Button name="github" style={styles.button} backgroundColor="#000000" 
-          size={30} onPress={() => requestAuth('github')}>
-          Login com Github
-        </FontAwesome.Button>
-        <FontAwesome.Button name="twitter" style={styles.button} backgroundColor="#1DA1F2" 
-          size={30} onPress={() => requestAuth('twitter')}>
-          Login com Twitter
-        </FontAwesome.Button>
-        <FontAwesome.Button name="spotify" style={styles.button} backgroundColor="#1DB954" 
-          size={30} onPress={() => requestAuth('spotify')}>
-          Login com Spotify
-        </FontAwesome.Button>
-        <FontAwesome.Button name="reddit" style={styles.button} backgroundColor="#ff6314" 
-          size={30} onPress={() => requestAuth('reddit')}>
-          Login com Reddit
-        </FontAwesome.Button>
-        <FontAwesome.Button name="facebook" style={styles.button} backgroundColor="#3b5998" 
-          size={30} onPress={() => requestAuth('facebook')}>
-          Login com Reddit
-        </FontAwesome.Button>
-        <StatusBar style="auto" />
-      </View>
-    </View>
+    <>
+      { 
+        !user.id ? 
+        <View style={styles.container}>
+          <View style={styles.containerText}>  
+            <Text style={styles.title}>
+              Bem-vindo ao Autenticador social
+            </Text>
+            <Text style={styles.description}>
+              Este app utiliza a autenticação do tipo OAuth e atualmente a mesma 
+              funciona com as plataformas abaixo:
+            </Text>
+          </View>
+          <View style={styles.containerButton}>
+            <FontAwesome.Button name="google" style={styles.button} backgroundColor="#d62d20" 
+              size={30} onPress={() => requestAuth('google')}>
+              Login com Google
+            </FontAwesome.Button>
+            <FontAwesome.Button name="github" style={styles.button} backgroundColor="#000000" 
+              size={30} onPress={() => requestAuth('github')}>
+              Login com Github
+            </FontAwesome.Button>
+            <FontAwesome.Button name="twitter" style={styles.button} backgroundColor="#1DA1F2" 
+              size={30} onPress={() => requestAuth('twitter')}>
+              Login com Twitter
+            </FontAwesome.Button>
+            <FontAwesome.Button name="spotify" style={styles.button} backgroundColor="#1DB954" 
+              size={30} onPress={() => requestAuth('spotify')}>
+              Login com Spotify
+            </FontAwesome.Button>
+            <FontAwesome.Button name="reddit" style={styles.button} backgroundColor="#ff6314" 
+              size={30} onPress={() => requestAuth('reddit')}>
+              Login com Reddit
+            </FontAwesome.Button>
+            <FontAwesome.Button name="facebook" style={styles.button} backgroundColor="#3b5998" 
+              size={30} onPress={() => requestAuth('facebook')}>
+              Login com Reddit
+            </FontAwesome.Button>
+            <StatusBar style="auto" />
+          </View>
+        </View> 
+         : 
+        <Profile user={user} /> 
+      }
+    </>
   );
 
 }
