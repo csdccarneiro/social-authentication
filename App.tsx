@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as WebBrowser from 'expo-web-browser';
 import { AuthRequest } from 'expo-auth-session';
@@ -28,10 +29,25 @@ export default function App() {
 
   }
 
+  async function Logout () {
+
+    Alert.alert('Sair', 'Deseja realmente deslogar?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel'
+      },
+      {
+        text: 'Ok', 
+        onPress: () => setUser({})
+      }
+    ]);
+
+  }
+
   return (
     <>
       <StatusBar style="auto" />
-      { !user.id ? <Login onAuth={requestAuth} /> : <Profile user={user} /> }
+      { !user.id ? <Login onAuth={requestAuth} /> : <Profile user={user} onLogout={Logout} /> }
     </>
   );
 

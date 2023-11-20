@@ -3,10 +3,11 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface ProfileProps {
-  user: Global.UserProps
+  user: Global.UserProps,
+  onLogout: () => void
 }
 
-export default function Profile({ user }: ProfileProps) {
+export default function Profile({ user, onLogout }: ProfileProps) {
 
   return (
     <View style={styles.container}>      
@@ -31,6 +32,9 @@ export default function Profile({ user }: ProfileProps) {
         <Text style={styles.text}>E-mail: </Text>
         <Text>{user.email}</Text>
       </View>
+      <FontAwesome.Button name="close" backgroundColor="#d62d20" size={20} onPress={onLogout}>
+        Sair
+      </FontAwesome.Button>
     </View>
   );
 }
@@ -45,12 +49,12 @@ const styles = StyleSheet.create({
   containerDescription: { 
     flexDirection: 'row', 
     alignItems: 'center',    
-    marginTop: 10
+    marginBottom: 20
   },
   avatar: { 
     width: 100, 
     height: 100,
-    marginBottom: 10
+    marginBottom: 20
   },
   text: {
     fontWeight: 'bold'
