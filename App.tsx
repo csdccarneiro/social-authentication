@@ -13,7 +13,7 @@ export default function App() {
 
   const [user, setUser] = React.useState<Global.UserProps>({})
 
-  async function requestAuth (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google' | 'facebook') {
+  async function requestLogin (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google' | 'facebook') {
 
     const authPlatform = ConfigAuth[platform]
 
@@ -29,7 +29,7 @@ export default function App() {
 
   }
 
-  async function Logout () {
+  async function requestLogout () {
 
     Alert.alert('Sair', 'Deseja realmente deslogar?', [
       {
@@ -47,7 +47,7 @@ export default function App() {
   return (
     <>
       <StatusBar style="auto" />
-      { !user.id ? <Login onAuth={requestAuth} /> : <Profile user={user} onLogout={Logout} /> }
+      { !user.id ? <Login onLogin={requestLogin} /> : <Profile user={user} onLogout={requestLogout} /> }
     </>
   );
 
