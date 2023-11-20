@@ -11,7 +11,7 @@ declare namespace Global {
     }
 
     interface UserProps {
-        id?: number,
+        id?: string,
         name?: string,
         email?: string,
         avatarUrl?: string

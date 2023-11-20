@@ -42,7 +42,7 @@ export default {
             return responseTokenGenerate.data
 
         },  
-        getUser: async function (access_token: string) {
+        getUser: async function (access_token: string): Promise<Global.UserProps> {
             
             const response = await axios.get(`${GITHUB_API_BASE_URL}/user`, {
                 headers: { 
@@ -56,7 +56,7 @@ export default {
                 id: String(user.id),
                 name: user.name || user.login,
                 email: user.email,
-                picture: user.avatar_url
+                avatarUrl: user.avatar_url
             }
 
         }
@@ -101,7 +101,7 @@ export default {
             return responseTokenGenerate.data
 
         },
-        getUser: async function (access_token: string) {
+        getUser: async function (access_token: string): Promise<Global.UserProps> {
 
             const response = await axios.get(`${TWITTER_API_BASE_URL}/2/users/me`, {
                 headers: { 
@@ -115,7 +115,7 @@ export default {
                 id: String(user.id),
                 name: user.name, 
                 email: user.username,
-                picture: ""
+                avatarUrl: ""
             }
 
         }
@@ -157,7 +157,7 @@ export default {
             return responseTokenGenerate.data
 
         },
-        getUser: async function (access_token: string) {
+        getUser: async function (access_token: string): Promise<Global.UserProps> {
             
             const response = await axios.get(`${SPOTIFY_API_BASE_URL}/v1/me`, {
                 headers: { 
@@ -171,7 +171,7 @@ export default {
                 id: String(user.id),
                 name: user.display_name,
                 email: user.email,
-                picture: ''
+                avatarUrl: ''
             }
 
         }
@@ -212,7 +212,7 @@ export default {
             return responseTokenGenerate.data
 
         },
-        getUser: async function (access_token: string) {
+        getUser: async function (access_token: string): Promise<Global.UserProps> {
 
             const response = await axios.get(`${REDDIT_API_BASE_URL}/api/v1/me`, {
                 headers: { 
@@ -226,7 +226,7 @@ export default {
                 id: String(user.id),
                 name: user.name,
                 email: "",
-                picture: user.icon_img
+                avatarUrl: user.icon_img
             }
 
         }
@@ -265,7 +265,7 @@ export default {
             return responseTokenGenerate.data
 
         },
-        getUser: async function (access_token: string) {
+        getUser: async function (access_token: string): Promise<Global.UserProps> {
 
             const response = await axios.get(`${GOOGLE_API_BASE_URL}/userinfo/v2/me`, {
                 headers: { 
@@ -279,7 +279,7 @@ export default {
                 id: String(user.id),
                 name: user.name,
                 email: user.email,
-                picture: user.picture
+                avatarUrl: user.picture
             }
 
         }
@@ -310,7 +310,7 @@ export default {
             return responseTokenGenerate.data
     
         },
-        getUser: async function (access_token: string) {
+        getUser: async function (access_token: string): Promise<Global.UserProps> {
     
             const response = await axios.get(`${FACEBOOK_API_BASE_URL}/me`, {
                 params: {
@@ -325,7 +325,7 @@ export default {
                 id: String(user.id),
                 name: user.name,
                 email: "",
-                picture: user.picture.data.url
+                avatarUrl: user.picture.data.url
             }
     
         }
