@@ -14,7 +14,7 @@ export default function App() {
 
   const [user, setUser] = useState<Global.UserProps>({})
 
-
+  //SALVANDO OS DADOS DO USUÁRIO
   const saveUser = useCallback(async (value: Global.UserProps) => {
 
     const jsonValue = JSON.stringify(value);
@@ -25,7 +25,7 @@ export default function App() {
 
   }, [])
 
-
+  //PEGANDO DADOS SALVOS DO USUÁRIO
   const getUser = useCallback(async () => {
 
     const jsonStringValue = await AsyncStorage.getItem('@user') || JSON.stringify({});
@@ -36,7 +36,7 @@ export default function App() {
 
   }, [])
 
-
+  //REMOVENDO DADOS SALVOS DO USUÁRIO
   const removeUser = useCallback(async () => {
 
     await AsyncStorage.removeItem('@user')
@@ -59,6 +59,8 @@ export default function App() {
 
   }, [])
 
+
+  //MÉTODO QUE FAZ AUTENTICAÇÃO OAUTH NAS PLATAFORMAS
   async function requestLogin (platform: 'github' | 'twitter' | 'spotify' | 'reddit' | 'google' | 'facebook') {
 
     try {
@@ -83,6 +85,8 @@ export default function App() {
 
   }
 
+
+  //MÉTODO QUE DESLOGA O USUÁRIO
   async function requestLogout () {
 
     Alert.alert('Sair', 'Deseja realmente deslogar?', [

@@ -9,6 +9,7 @@ import { REDDIT_BASE_URL, REDDIT_API_BASE_URL, REDDIT_CLIENT_ID } from "@env"
 import { FACEBOOK_BASE_URL, FACEBOOK_API_BASE_URL, FACEBOOK_CLIENT_ID, FACEBOOK_CLIENT_SECRET } from "@env"
 
 
+/* CONFIGURAÇÕES E MÉTODOS PARA AUTENTICAÇÃO OAUTH NAS PLATAFORMAS */
 export default {
     github: {
         config: {
@@ -106,6 +107,9 @@ export default {
             const response = await axios.get(`${TWITTER_API_BASE_URL}/2/users/me`, {
                 headers: { 
                     Authorization: `Bearer ${access_token}` 
+                },
+                params: {
+                    'user.fields': 'profile_image_url'
                 }
             })
 
@@ -115,7 +119,7 @@ export default {
                 id: String(user.id),
                 name: user.name, 
                 email: user.username,
-                avatarUrl: ""
+                avatarUrl: user.profile_image_url
             }
 
         }
@@ -167,11 +171,13 @@ export default {
 
             const user = response.data
 
+            const images = (user.images.length > 0 ? user.images : [{ width: 300, height: 300, url: '' }])
+
             return {
                 id: String(user.id),
                 name: user.display_name,
                 email: user.email,
-                avatarUrl: ''
+                avatarUrl: images.filter(img => img.width === 300 || img.height === 300)[0].url
             }
 
         }
@@ -225,7 +231,7 @@ export default {
             return {
                 id: String(user.id),
                 name: user.name,
-                email: "",
+                email: user.name,
                 avatarUrl: user.icon_img
             }
 
@@ -315,7 +321,7 @@ export default {
             const response = await axios.get(`${FACEBOOK_API_BASE_URL}/me`, {
                 params: {
                     access_token,
-                    fields: 'id,name,picture.type(large)'
+                    fields: 'id,name,email,picture.type(large)'
                 }
             })
 
@@ -324,7 +330,7 @@ export default {
             return {
                 id: String(user.id),
                 name: user.name,
-                email: "",
+                email: user.email,
                 avatarUrl: user.picture.data.url
             }
     
