@@ -21,7 +21,7 @@ export default function Profile({ user, onLogout }: ProfileProps) {
         )
       }
       <View style={styles.containerDescription}>
-        <Text style={styles.text}>User ID: </Text>
+        <Text style={styles.text}>ID: </Text>
         <Text>{user.id}</Text>
       </View>
       <View style={styles.containerDescription}>
@@ -29,7 +29,7 @@ export default function Profile({ user, onLogout }: ProfileProps) {
         <Text>{user.name}</Text>
       </View>
       <View style={styles.containerDescription}>
-        <Text style={styles.text}>E-mail: </Text>
+        <Text style={styles.text}>E-mail / Nome do usuário: </Text>
         <Text>{user.email}</Text>
       </View>
       <FontAwesome.Button name="close" backgroundColor="#d62d20" size={20} onPress={onLogout}>
